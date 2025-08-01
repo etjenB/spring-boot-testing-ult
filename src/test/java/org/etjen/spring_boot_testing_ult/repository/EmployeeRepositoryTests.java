@@ -20,24 +20,43 @@ public class EmployeeRepositoryTests {
 
     @Test
     void givenEmployeeObject_whenSave_thenReturnSavedEmployee() {
+        // given
         Employee employee = Employee.builder().firstName("Test").lastName("Test").email("test@gmail.com").build();
 
+        // when
         Employee savedEmployee = employeeRepository.save(employee);
 
+        // then
         assertThat(savedEmployee).isNotNull();
         assertThat(savedEmployee.getId()).isPositive();
     }
 
     @Test
     void givenEmployeeList_whenFindAll_thenReturnEmployeeList() {
+        // given
         Employee employee1 = Employee.builder().firstName("Test1").lastName("Test1").email("test1@gmail.com").build();
         Employee employee2 = Employee.builder().firstName("Test2").lastName("Test2").email("test2@gmail.com").build();
         Employee employee3 = Employee.builder().firstName("Test3").lastName("Test3").email("test3@gmail.com").build();
         employeeRepository.saveAll(List.of(employee1, employee2, employee3));
 
+        // when
         List<Employee> employeeList = employeeRepository.findAll();
 
+        // then
         assertThat(employeeList).isNotEmpty();
         assertThat(employeeList.size()).isEqualTo(3);
+    }
+
+    @Test
+    void givenEmployeeObject_whenFindById_thenReturnSavedEmployee() {
+        // given
+        Employee employee = Employee.builder().firstName("Test").lastName("Test").email("test@gmail.com").build();
+        Employee savedEmployee = employeeRepository.save(employee);
+
+        // when
+        Employee dbEmployee = employeeRepository.findById(savedEmployee.getId()).orElseThrow();
+
+        // then
+        assertThat(dbEmployee.getId()).isEqualTo(savedEmployee.getId());
     }
 }
