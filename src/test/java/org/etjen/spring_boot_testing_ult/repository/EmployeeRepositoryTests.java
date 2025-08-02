@@ -2,6 +2,7 @@ package org.etjen.spring_boot_testing_ult.repository;
 
 import jakarta.persistence.EntityManager;
 import org.etjen.spring_boot_testing_ult.model.Employee;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -18,26 +19,34 @@ public class EmployeeRepositoryTests {
     @Autowired
     private EmployeeRepository employeeRepository;
 
+    private Employee employee;
+
+    @BeforeEach
+    void setUp() {
+        employee = Employee.builder().firstName("Test").lastName("Test").email("test@gmail.com").build();
+    }
+
     @Test
     void givenEmployeeObject_whenSave_thenReturnSavedEmployee() {
         // given
-        Employee employee = Employee.builder().firstName("Test").lastName("Test").email("test@gmail.com").build();
 
         // when
-        Employee savedEmployee = employeeRepository.save(employee);
+        employeeRepository.saveAndFlush(employee);
+        entityManager.clear();
+        Optional<Employee> savedEmployee = employeeRepository.findById(employee.getId());
 
         // then
-        assertThat(savedEmployee).isNotNull();
-        assertThat(savedEmployee.getId()).isPositive();
+        assertThat(savedEmployee).isPresent();
+        assertThat(savedEmployee.get().getId()).isPositive();
     }
 
     @Test
     void givenEmployeeList_whenFindAll_thenReturnEmployeeList() {
         // given
-        Employee employee1 = Employee.builder().firstName("Test1").lastName("Test1").email("test1@gmail.com").build();
         Employee employee2 = Employee.builder().firstName("Test2").lastName("Test2").email("test2@gmail.com").build();
         Employee employee3 = Employee.builder().firstName("Test3").lastName("Test3").email("test3@gmail.com").build();
-        employeeRepository.saveAll(List.of(employee1, employee2, employee3));
+        employeeRepository.saveAllAndFlush(List.of(employee, employee2, employee3));
+        entityManager.clear();
 
         // when
         List<Employee> employeeList = employeeRepository.findAll();
@@ -50,21 +59,22 @@ public class EmployeeRepositoryTests {
     @Test
     void givenEmployeeObject_whenFindById_thenReturnSavedEmployee() {
         // given
-        Employee employee = Employee.builder().firstName("Test").lastName("Test").email("test@gmail.com").build();
-        Employee savedEmployee = employeeRepository.save(employee);
+        Employee savedEmployee = employeeRepository.saveAndFlush(employee);
+        entityManager.clear();
 
         // when
-        Employee dbEmployee = employeeRepository.findById(savedEmployee.getId()).orElseThrow();
+        Optional<Employee> dbEmployee = employeeRepository.findById(savedEmployee.getId());
 
         // then
-        assertThat(dbEmployee.getId()).isEqualTo(savedEmployee.getId());
+        assertThat(dbEmployee).isPresent();
+        assertThat(dbEmployee.get().getId()).isEqualTo(savedEmployee.getId());
     }
 
     @Test
     void givenEmployeeEmail_whenFindByEmail_thenReturnEmployee() {
         // given
-        Employee employee = Employee.builder().firstName("Test").lastName("Test").email("test@gmail.com").build();
-        Employee savedEmployee = employeeRepository.save(employee);
+        Employee savedEmployee = employeeRepository.saveAndFlush(employee);
+        entityManager.clear();
 
         // when
         Optional<Employee> dbEmployee = employeeRepository.findByEmail(savedEmployee.getEmail());
@@ -77,8 +87,8 @@ public class EmployeeRepositoryTests {
     @Test
     void givenEmployeeObject_whenUpdateEmployee_thenReturnUpdatedEmployee() {
         // given
-        Employee employee = Employee.builder().firstName("Test").lastName("Test").email("test@gmail.com").build();
-        Employee savedEmployee = employeeRepository.save(employee);
+        Employee savedEmployee = employeeRepository.saveAndFlush(employee);
+        entityManager.clear();
 
         // when
         savedEmployee.setFirstName("TestNew");
@@ -99,7 +109,6 @@ public class EmployeeRepositoryTests {
     @Test
     void givenEmployeeObject_whenDelete_thenDeletedEmployeeObject() {
         // given
-        Employee employee = Employee.builder().firstName("Test").lastName("Test").email("test@gmail.com").build();
         Employee savedEmployee = employeeRepository.saveAndFlush(employee);
         entityManager.clear();
 
@@ -116,7 +125,6 @@ public class EmployeeRepositoryTests {
     @Test
     void givenEmployeeFirstNameAndLastName_whenFindByFullName_thenReturnEmployeeObject() {
         // given
-        Employee employee = Employee.builder().firstName("Test").lastName("Test").email("test@gmail.com").build();
         Employee savedEmployee = employeeRepository.saveAndFlush(employee);
         entityManager.clear();
 
