@@ -1,7 +1,8 @@
-package org.etjen.spring_boot_testing_ult.repository;
+package org.etjen.spring_boot_testing_ult.unit.repository;
 
 import jakarta.persistence.EntityManager;
 import org.etjen.spring_boot_testing_ult.model.Employee;
+import org.etjen.spring_boot_testing_ult.repository.EmployeeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

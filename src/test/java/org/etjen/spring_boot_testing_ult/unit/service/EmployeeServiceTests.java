@@ -1,4 +1,4 @@
-package org.etjen.spring_boot_testing_ult.service;
+package org.etjen.spring_boot_testing_ult.unit.service;
 
 import org.etjen.spring_boot_testing_ult.exception.EmployeeAlreadyExistsException;
 import org.etjen.spring_boot_testing_ult.model.Employee;

@@ -1,4 +1,4 @@
-package org.etjen.spring_boot_testing_ult.controller;
+package org.etjen.spring_boot_testing_ult.unit.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.etjen.spring_boot_testing_ult.model.Employee;
